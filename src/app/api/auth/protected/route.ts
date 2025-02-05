@@ -12,6 +12,7 @@ export async function GET(req: NextRequest) {
     const decoded = jwt.verify(token, process.env.JWT_SECRET!);
     return NextResponse.json({ message: "Access granted", user: decoded }, { status: 200 });
   } catch (error) {
+    console.error("Protected Route Error:", error);
     return NextResponse.json({ error: "Invalid token" }, { status: 401 });
   }
 }

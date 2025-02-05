@@ -20,7 +20,7 @@ interface SidebarProps {
       initial={{ x: -250 }}
       animate={{ x: 0 }}
       transition={{ duration: 0.3 }}
-      className="fixed left-0 top-0 h-full w-64 bg-gray-900 shadow-lg flex flex-col text-white"
+      className={`fixed left-0 top-0 h-full w-64 bg-gray-900 shadow-lg flex flex-col text-white ${className}`}
     >
       <h2 className="text-2xl font-bold p-6 border-b border-gray-700">Task Manager</h2>
 
