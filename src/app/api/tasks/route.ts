@@ -6,7 +6,7 @@ import { cookies } from "next/headers";
 import jwt, { JwtPayload } from "jsonwebtoken";
 
 // ✅ GET ALL TASKS (For Logged-in User)
-export async function GET(req: NextRequest) {
+export async function GET() {
   try {
     const cookieStore = await cookies(); // ✅ FIX: Await cookies()
     const token = cookieStore.get("auth_token")?.value;
@@ -26,9 +26,12 @@ export async function GET(req: NextRequest) {
     const userTasks = await db.select().from(tasks).where(eq(tasks.userId, userId));
     return NextResponse.json(userTasks, { status: 200 });
 
-  } catch (error:any) {
-    console.error("GET /tasks Error:", error);
-    return NextResponse.json({ error: "Something went wrong", details: error.message }, { status: 500 });
+  } catch (error: unknown) {
+    if (error instanceof Error) {
+      console.error("GET /tasks Error:", error.message);
+      return NextResponse.json({ error: "Something went wrong", details: error.message }, { status: 500 });
+    }
+    return NextResponse.json({ error: "Unexpected error occurred" }, { status: 500 });
   }
 }
 
@@ -59,9 +62,12 @@ export async function POST(req: NextRequest) {
     const [newTask] = await db.insert(tasks).values({ title, description, priority, dueDate, userId }).returning();
     return NextResponse.json(newTask, { status: 201 });
 
-  } catch (error:any) {
-    console.error("POST /tasks Error:", error);
-    return NextResponse.json({ error: "Something went wrong", details: error.message }, { status: 500 });
+  } catch (error: unknown) {
+    if (error instanceof Error) {
+      console.error("POST /tasks Error:", error.message);
+      return NextResponse.json({ error: "Something went wrong", details: error.message }, { status: 500 });
+    }
+    return NextResponse.json({ error: "Unexpected error occurred" }, { status: 500 });
   }
 }
 
@@ -86,9 +92,12 @@ export async function DELETE(req: NextRequest) {
     console.log(`DELETE /tasks: Task with ID ${taskId} deleted successfully`);
     return NextResponse.json({ message: "Task deleted successfully", deletedTask: deletedTask[0] }, { status: 200 });
 
-  } catch (error:any) {
-    console.error("DELETE /tasks Error:", error);
-    return NextResponse.json({ error: "Something went wrong", details: error.message }, { status: 500 });
+  } catch (error: unknown) {
+    if (error instanceof Error) {
+      console.error("DELETE /tasks Error:", error.message);
+      return NextResponse.json({ error: "Something went wrong", details: error.message }, { status: 500 });
+    }
+    return NextResponse.json({ error: "Unexpected error occurred" }, { status: 500 });
   }
 }
 export async function PUT(req: NextRequest) {
@@ -117,8 +126,11 @@ export async function PUT(req: NextRequest) {
     }
 
     return NextResponse.json({ message: "Task updated successfully" }, { status: 200 });
-  } catch (error) {
-    console.error("PUT /tasks Error:", error);
-    return NextResponse.json({ error: "Something went wrong" }, { status: 500 });
+  }catch (error: unknown) {
+    if (error instanceof Error) {
+      console.error("PUT /tasks Error:", error.message);
+      return NextResponse.json({ error: "Something went wrong", details: error.message }, { status: 500 });
+    }
+    return NextResponse.json({ error: "Unexpected error occurred" }, { status: 500 });
   }
 }

@@ -25,10 +25,14 @@ export default function Login() {
       if (response.status === 200) {
         router.push("/dashboard");
       }
-    } catch (error: any) {
-      setError(error.response?.data?.error || "Invalid email or password.");
-    } finally {
-      setLoading(false);
+    } catch (error: unknown) {
+      if (axios.isAxiosError(error)) {
+        setError(error.response?.data?.error || "Invalid email or password.");
+      } else if (error instanceof Error) {
+        setError(error.message);
+      } else {
+        setError("An unexpected error occurred.");
+      }
     }
   };
 
@@ -70,8 +74,8 @@ export default function Login() {
           </motion.button>
         </form>
         <p className="text-center text-white text-sm mt-6">
-          Don't have an account? <a href="/signup" className="text-green-300">Sign up</a>
-        </p>
+  Don&apos;t have an account? <a href="/signup" className="text-green-300">Sign up</a>
+</p>
       </motion.div>
     </div>
   );

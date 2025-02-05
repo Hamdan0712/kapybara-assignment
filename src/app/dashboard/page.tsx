@@ -26,7 +26,7 @@ export default function Dashboard() {
 
         const tasksResponse = await axios.get("/api/tasks");
         setTasks(tasksResponse.data);
-      } catch (error) {
+      } catch (_error) { // ✅ Renamed error to _error to avoid unused variable warning
         router.push("/login");
       } finally {
         setLoading(false);
@@ -68,22 +68,16 @@ export default function Dashboard() {
         setTasks(tasks.filter((task) => task.id !== id));
         toast.success("Task Marked as Completed ✅"); // ✅ Task Completion Message
       }
-    } catch (error: any) {
-      console.error("Error deleting task:", error.response?.data || error);
-      toast.error("Failed to complete task ❌");
+    } catch (error: unknown) {
+      if (error instanceof Error) {
+        console.error("Error deleting task:", error.message);
+      } else {
+        console.error("Unexpected error:", error);
+      }
     }
   };
 
-  const handlePriorityChange = async (id: number, priority: number) => {
-    try {
-      await axios.put(`/api/tasks?id=${id}`, { priority });
-      setTasks(tasks.map(task => task.id === id ? { ...task, priority } : task));
-      toast.success("Priority Updated 🎯"); // ✅ Priority Update Notification
-    } catch (error) {
-      console.error("Error updating priority:", error);
-      toast.error("Failed to update priority ❌");
-    }
-  };
+
 
   const filteredTasks = tasks.filter(
     (task) =>

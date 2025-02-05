@@ -25,10 +25,14 @@ export default function Signup() {
       if (response.status === 201) {
         router.push("/login");
       }
-    } catch (error: any) {
-      setError(error.response?.data?.error || "Something went wrong.");
-    } finally {
-      setLoading(false);
+    } catch (error: unknown) {
+      if (axios.isAxiosError(error)) {
+        setError(error.response?.data?.error || "Something went wrong.");
+      } else if (error instanceof Error) {
+        setError(error.message);
+      } else {
+        setError("An unexpected error occurred.");
+      }
     }
   };
 
