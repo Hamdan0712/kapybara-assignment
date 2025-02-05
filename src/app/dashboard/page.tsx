@@ -26,7 +26,7 @@ export default function Dashboard() {
 
         const tasksResponse = await axios.get("/api/tasks");
         setTasks(tasksResponse.data);
-      } catch (_error) { // ✅ Renamed error to _error to avoid unused variable warning
+      } catch { 
         router.push("/login");
       } finally {
         setLoading(false);
