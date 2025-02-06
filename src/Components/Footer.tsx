@@ -1,7 +1,5 @@
 "use client";
 
-
-
 const Footer: React.FC<{ darkMode: boolean }> = ({ darkMode }) => {
   return (
     <footer
@@ -18,7 +16,7 @@ const Footer: React.FC<{ darkMode: boolean }> = ({ darkMode }) => {
         </div>
 
         {/* Navigation Links */}
-        <div className="flex space-x-6 mt-3 md:mt-0">
+        <div className="flex justify-between space-x-6 mt-3 md:mt-0">
           <a href="#" className="hover:underline">
             About Us
           </a>
