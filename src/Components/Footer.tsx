@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+
 
 const Footer: React.FC<{ darkMode: boolean }> = ({ darkMode }) => {
   return (
