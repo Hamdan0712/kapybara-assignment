@@ -6,6 +6,7 @@ import axios from "axios";
 import { motion } from "framer-motion";
 import toast, { Toaster } from "react-hot-toast"; 
 import Sidebar from "../../Components/Sidebar"; 
+import MobileSidebar from "@/Components/Mobiles";
 
 
 export default function Dashboard() {
@@ -130,12 +131,21 @@ export default function Dashboard() {
 
     <div className={`flex flex-col md:flex-row min-h-screen transition-colors duration-300 
     ${darkMode ? "bg-gray-100 text-gray-900" : "bg-gradient-to-br from-gray-900 to-gray-700 text-gray-200"}`}>
-    {/* Sidebar (Fixed Width) */}
-    <Sidebar className="w-64 min-h-screen" darkMode={darkMode} toggleDarkMode={toggleDarkMode} />
+    
+    {/* ✅ Sidebar (Collapsible on Mobile) */}
 
-    {/* Main Content (Takes Remaining Space) */}
+    <div className="hidden md:block">
+  <Sidebar darkMode={darkMode} toggleDarkMode={toggleDarkMode} />
+</div>
+
+{/* ✅ Mobile Sidebar (Only visible on sm and below) */}
+<div className="md:hidden">
+  <MobileSidebar darkMode={darkMode} toggleDarkMode={toggleDarkMode} />
+</div>
+
+    {/* ✅ Main Content (Should Not Shift Down) */}
     <motion.div 
-      className="flex flex-col flex-grow items-center justify-start p-8 w-full"
+      className="flex flex-col flex-grow items-center justify-start p-8 w-full md:ml-64" // ✅ Added md:ml-64 to prevent shifting
       initial={{ opacity: 0, y: 10, scale: 0.98 }}
       animate={{ opacity: 1, y: 0, scale: 1 }}
       transition={{ duration: 0.5, ease: "easeOut" }}
@@ -170,7 +180,7 @@ export default function Dashboard() {
 </h2>
 
       {/* Search & Sorting Controls */}
-      <div className="flex flex-row gap-4 w-full max-w-xl mt-6">
+      <div className="flex flex-col md:flex-row gap-4 w-full max-w-xl mt-6">
       <input
   type="text"
   placeholder="Search tasks..."
@@ -182,7 +192,7 @@ export default function Dashboard() {
         <select
           value={sortBy}
           onChange={(e) => setSortBy(e.target.value)}
-          className="p-3 rounded-lg border border-gray-600 bg-gray-700 text-white focus:outline-none"
+          className="w-full md:w-auto p-3 rounded-lg border border-gray-600 bg-gray-700 text-white focus:outline-none"
         >
           <option value="priority-desc">Sort by Priority (High → Low)</option>
           <option value="priority-asc">Sort by Priority (Low → High)</option>
