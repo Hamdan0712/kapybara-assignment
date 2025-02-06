@@ -30,10 +30,12 @@ const MobileSidebar: React.FC<MobileSidebarProps> = ({ darkMode, toggleDarkMode 
 
       {/* ✅ Sidebar with Slide-in Animation */}
       <motion.div
-        initial={{ x: -250 }}
-        animate={{ x: isOpen ? 0 : -250 }}
+        initial={{ x: "-100%" }} // 🔥 Fully hidden initially
+        animate={{ x: isOpen ? "0%" : "-100%" }} // 🔥 Slides in/out completely
         transition={{ duration: 0.3 }}
-        className={`fixed top-0 left-0 h-full w-64 shadow-lg flex flex-col z-40 transition-all ${darkMode ? "bg-gray-100 text-gray-900 border-r border-gray-300" : "bg-gray-900 text-white border-gray-700"} md:hidden`}
+        className={`fixed top-0 left-0 h-full w-64 shadow-lg flex flex-col z-50 transition-all 
+          ${darkMode ? "bg-gray-100 text-gray-900 border-r border-gray-300" : "bg-gray-900 text-white border-gray-700"} 
+          md:hidden`}
       >
         {/* Close Button */}
         <button
