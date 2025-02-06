@@ -19,12 +19,7 @@ export default function Dashboard() {
   const [sortBy, setSortBy] = useState("priority-desc");
   const [darkMode, setDarkMode] = useState(false);
 
-const [completedTasks, setCompletedTasks] = useState<number[]>([]);
 
-const markTaskAsDone = (taskId: number) => {
-  setCompletedTasks((prev) => [...prev, taskId]); // Mark task as completed locally
-  handleDeleteTask(taskId); // Call your delete function
-};
 
   useEffect(() => {
     const fetchData = async () => {
@@ -230,7 +225,7 @@ const markTaskAsDone = (taskId: number) => {
     isAdding ? "bg-gray-500 cursor-not-allowed" : "bg-green-500 hover:bg-green-600"
   } text-white font-semibold`}
 >
-  {isAdding ? ( // ✅ Show loading spinner
+  {isAdding ? ( 
     <motion.div
       animate={{ rotate: 360 }}
       transition={{ repeat: Infinity, duration: 0.7, ease: "linear" }}
@@ -253,7 +248,7 @@ const markTaskAsDone = (taskId: number) => {
      {task.title}
    </h3>
  
-   {/* Task Description */}
+
    <p className={`transition-all ${darkMode ? "text-gray-700" : "text-gray-300"}`}>
      {task.description || "No description provided."}
    </p>
