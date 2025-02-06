@@ -17,6 +17,14 @@ export default function Dashboard() {
   const [searchQuery, setSearchQuery] = useState("");
   const [isAdding, setIsAdding] = useState(false);
   const [sortBy, setSortBy] = useState("priority-desc");
+  const [darkMode, setDarkMode] = useState(false);
+
+const [completedTasks, setCompletedTasks] = useState<number[]>([]);
+
+const markTaskAsDone = (taskId: number) => {
+  setCompletedTasks((prev) => [...prev, taskId]); // Mark task as completed locally
+  handleDeleteTask(taskId); // Call your delete function
+};
 
   useEffect(() => {
     const fetchData = async () => {
@@ -34,6 +42,16 @@ export default function Dashboard() {
     };
     fetchData();
   }, [router]);
+
+  useEffect(() => {
+    const storedTheme = localStorage.getItem("darkMode");
+    if (storedTheme === "true") setDarkMode(true);
+  }, []);
+
+  const toggleDarkMode = () => {
+    setDarkMode(!darkMode);
+    localStorage.setItem("darkMode", (!darkMode).toString());
+  };
 
   const handleLogout = async () => {
     try {
@@ -115,9 +133,10 @@ export default function Dashboard() {
 
   return (
 
-    <div className="flex min-h-screen bg-gradient-to-br from-gray-900 to-gray-700 text-gray-200">
+    <div className={`flex flex-col md:flex-row min-h-screen transition-colors duration-300 
+    ${darkMode ? "bg-gray-100 text-gray-900" : "bg-gradient-to-br from-gray-900 to-gray-700 text-gray-200"}`}>
     {/* Sidebar (Fixed Width) */}
-    <Sidebar className="w-64 min-h-screen" />
+    <Sidebar className="w-64 min-h-screen" darkMode={darkMode} toggleDarkMode={toggleDarkMode} />
 
     {/* Main Content (Takes Remaining Space) */}
     <motion.div 
@@ -129,6 +148,16 @@ export default function Dashboard() {
       <Toaster /> {/* ✅ Toast Messages */}
 
       {/* Logout Button */}
+
+
+
+      <button
+  onClick={toggleDarkMode}
+  className={`absolute top-5 right-20 p-2 mr-20 rounded-lg transition-all font-semibold shadow-md border
+    ${darkMode ? "bg-gray-200 text-gray-900 border-gray-400 hover:bg-gray-300" : "bg-gray-800 text-white border-gray-600 hover:bg-gray-700"}`}>
+  {darkMode ? "🌞 Light Mode" : "🌙 Dark Mode"}
+</button>
+
       <motion.button
         whileHover={{ scale: 1.05 }}
         whileTap={{ scale: 0.95 }}
@@ -138,18 +167,23 @@ export default function Dashboard() {
         Logout
       </motion.button>
 
+    
       {/* Dashboard Title */}
-      <h2 className="text-4xl font-bold text-white mt-5">Welcome, {user?.email}</h2>
+      <h2 className={`text-4xl font-bold mt-5 transition-colors duration-300 
+  ${darkMode ? "text-gray-900" : "text-white"}`}>
+  Welcome, {user?.email}
+</h2>
 
       {/* Search & Sorting Controls */}
       <div className="flex flex-row gap-4 w-full max-w-xl mt-6">
-        <input
-          type="text"
-          placeholder="Search tasks..."
-          value={searchQuery}
-          onChange={(e) => setSearchQuery(e.target.value)}
-          className="flex-1 p-3 rounded-lg border border-gray-600 bg-gray-700 text-white placeholder-gray-400 focus:outline-none"
-        />
+      <input
+  type="text"
+  placeholder="Search tasks..."
+  value={searchQuery}
+  onChange={(e) => setSearchQuery(e.target.value)}
+  className={`flex-1 p-3 rounded-lg border focus:outline-none transition-colors 
+    ${darkMode ? "border-gray-300 bg-gray-100 text-gray-900 placeholder-gray-600 focus:border-gray-500" : "border-gray-600 bg-gray-700 text-white placeholder-gray-400 focus:border-gray-400"}`}
+/>
         <select
           value={sortBy}
           onChange={(e) => setSortBy(e.target.value)}
@@ -211,19 +245,37 @@ export default function Dashboard() {
       {/* Task List */}
       <div className="mt-6 w-full max-w-xl space-y-4">
         {sortedTasks.map((task) => (
-          <div key={task.id} className="flex flex-col p-4 rounded-lg shadow-md bg-gray-900 border border-gray-700">
-            <h3 className="text-xl font-semibold text-white">{task.title}</h3>
-            <p className="text-gray-300">{task.description || "No description provided."}</p>
-            
-            <div className="flex justify-between items-center mt-3">
-              <span className={`px-2 py-1 text-sm font-bold rounded-lg text-black ${priorityColors[task.priority]}`}>
-                {task.priority === 1 ? "Low" : task.priority === 2 ? "Medium" : "High"}
-              </span>
-              <motion.button onClick={() => handleDeleteTask(task.id)} className="text-green-500 font-semibold">
-                ✅ Completed
-              </motion.button>
-            </div>
-          </div>
+   <div key={task.id} className={`flex flex-col p-4 rounded-lg shadow-md transition-all border
+   ${darkMode ? "bg-gray-100 border-gray-300 text-gray-900" : "bg-gray-900 border-gray-700 text-gray-200"}`}>
+ 
+   {/* Task Title */}
+   <h3 className={`text-xl font-semibold transition-all ${darkMode ? "text-gray-900" : "text-white"}`}>
+     {task.title}
+   </h3>
+ 
+   {/* Task Description */}
+   <p className={`transition-all ${darkMode ? "text-gray-700" : "text-gray-300"}`}>
+     {task.description || "No description provided."}
+   </p>
+ 
+   {/* Priority + Completed Button */}
+   <div className="flex justify-between items-center mt-3">
+     <span className={`px-2 py-1 text-sm font-bold rounded-lg transition-all 
+       ${darkMode ? "text-white" : "text-black"} ${priorityColors[task.priority]}`}>
+       {task.priority === 1 ? "Low" : task.priority === 2 ? "Medium" : "High"}
+     </span>
+ 
+     <motion.button
+       whileHover={{ scale: 1.05 }}
+       whileTap={{ scale: 0.95 }}
+       onClick={() => handleDeleteTask(task.id)}
+       className={`px-4 py-2 rounded-lg font-semibold transition-all shadow-md text-white 
+         ${darkMode ? "bg-green-600 hover:bg-green-700" : "bg-blue-500 hover:bg-blue-600"}`}
+     >
+       🎯 Mark as Done
+     </motion.button>
+   </div>
+ </div>
         ))}
       </div>
     </motion.div>
